@@ -84,5 +84,5 @@ docker run -it --name=etcd3 \
 
 ## How to run it in Kubernetes?
 
-In `exmple/k8s` is example configuration for 'Etcd Cluster' based on trhee nodes
+[Here](example/k8s) is example configuration for 'Etcd Cluster' based on trhee nodes
 
