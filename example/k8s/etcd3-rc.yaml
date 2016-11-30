@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: etcd-node-003
+  namespace: rejoinable-etcd
+  labels:
+    app: etcd
+    node-id: etcd-003
+
+spec:
+  replicas: 1
+  selector:
+    app: etcd
+    node-id: etcd-003
+
+  template:
+    metadata:
+      labels:
+        app: etcd
+        node-id: etcd-003
+    spec:
+      volumes:
+      - name: etcd-data-dir
+        emptyDir: {}
+      containers:
+
+      - name: etcd
+        image: balon/docker-rejoinable-etcd:v2.3.7
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - mountPath: /etcd3.etcd
+          name: etcd-data-dir
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: ETCD_NAME
+          value: "etcd3"
+        - name: ETCD_ADVERTISE_CLIENT_URLS
+          value: "http://etcd-001-node-003.rejoinable-etcd:2379"
+        - name: ETCD_LISTEN_CLIENT_URLS
+          value: "http://0.0.0.0:2379"
+        - name: ETCD_INITIAL_ADVERTISE_PEER_URLS
+          value: "http://etcd-001-node-003.rejoinable-etcd:2380"
+        - name: ETCD_LISTEN_PEER_URLS
+          value: "http://0.0.0.0:2380"
+        - name: ETCD_INITIAL_CLUSTER_TOKEN
+          value: "etcd-cluster-1"
+        - name: ETCD_INITIAL_CLUSTER
+          value: "etcd1=http://etcd-001-node-001.rejoinable-etcd:2380,etcd2=http://etcd-001-node-002.rejoinable-etcd:2380,etcd3=http://etcd-001-node-003.rejoinable-etcd:2380"
+        - name: ETCD_OTHER_PEERS_CLIENT_URLS
+          value: "http://etcd-001-node-001.rejoinable-etcd:2379,http://etcd-001-node-002.rejoinable-etcd:2379"
+        - name: ETCD_DEBUG
+          value: "true"
+        ports:
+        - name: etcd-db
+          containerPort: 2379
+          protocol: TCP
+        - name: etcd-cluster
+          containerPort: 2380
+          protocol: TCP

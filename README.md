@@ -43,7 +43,7 @@ Additionally there should be set `ETCD_OTHER_PEERS_CLIENT_URLS` custom environme
 
 ## How to run etcd cluster in dockers from command line?
 
-```bash
+````bash
 docker run -it --name=etcd1 \
 -e "ETCD_NAME=etcd1" \
 -e "ETCD_ADVERTISE_CLIENT_URLS=http://192.168.99.100:1379" \
@@ -54,8 +54,9 @@ docker run -it --name=etcd1 \
 -e "ETCD_INITIAL_CLUSTER=etcd1=http://192.168.99.100:1380,etcd2=http://192.168.99.100:2380,etcd3=http://192.168.99.100:3380" \
 -e "ETCD_OTHER_PEERS_CLIENT_URLS=http://192.168.99.100:2379,http://192.168.99.100:3379" \
 -p 1379:2379 -p 1380:2380 balon/docker-rejoinable-etcd:v2.3.7
+````
 
-
+````bash
 docker run -it --name=etcd2 \
 -e "ETCD_NAME=etcd2" \
 -e "ETCD_ADVERTISE_CLIENT_URLS=http://192.168.99.100:2379" \
@@ -66,7 +67,9 @@ docker run -it --name=etcd2 \
 -e "ETCD_INITIAL_CLUSTER=etcd1=http://192.168.99.100:1380,etcd2=http://192.168.99.100:2380,etcd3=http://192.168.99.100:3380" \
 -e "ETCD_OTHER_PEERS_CLIENT_URLS=http://192.168.99.100:1379,http://192.168.99.100:3379" \
 -p 2379:2379 -p 2380:2380 balon/docker-rejoinable-etcd:v2.3.7
+````
 
+````bash
 docker run -it --name=etcd3 \
 -e "ETCD_NAME=etcd3" \
 -e "ETCD_ADVERTISE_CLIENT_URLS=http://192.168.99.100:3379" \
@@ -77,9 +80,9 @@ docker run -it --name=etcd3 \
 -e "ETCD_INITIAL_CLUSTER=etcd1=http://192.168.99.100:1380,etcd2=http://192.168.99.100:2380,etcd3=http://192.168.99.100:3380" \
 -e "ETCD_OTHER_PEERS_CLIENT_URLS=http://192.168.99.100:1379,http://192.168.99.100:2379" \
 -p 3379:2379 -p 3380:2380 balon/docker-rejoinable-etcd:v2.3.7
-```
+````
 
 ## How to run it in Kubernetes?
 
-TODO
+In `exmple/k8s` is example configuration for 'Etcd Cluster' based on trhee nodes
 
