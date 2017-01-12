@@ -25,7 +25,7 @@ spec:
       containers:
 
       - name: etcd
-        image: balon/docker-rejoinable-etcd:v2.3.7
+        image: oberthur/docker-rejoinable-etcd:2.3.7
         resources:
           limits:
             cpu: 200m

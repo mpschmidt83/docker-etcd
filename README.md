@@ -53,7 +53,7 @@ docker run -it --name=etcd1 \
 -e "ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster-1" \
 -e "ETCD_INITIAL_CLUSTER=etcd1=http://192.168.99.100:1380,etcd2=http://192.168.99.100:2380,etcd3=http://192.168.99.100:3380" \
 -e "ETCD_OTHER_PEERS_CLIENT_URLS=http://192.168.99.100:2379,http://192.168.99.100:3379" \
--p 1379:2379 -p 1380:2380 balon/docker-rejoinable-etcd:v2.3.7
+-p 1379:2379 -p 1380:2380 oberthur/docker-rejoinable-etcd:2.3.7
 ````
 
 ````bash
@@ -66,7 +66,7 @@ docker run -it --name=etcd2 \
 -e "ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster-1" \
 -e "ETCD_INITIAL_CLUSTER=etcd1=http://192.168.99.100:1380,etcd2=http://192.168.99.100:2380,etcd3=http://192.168.99.100:3380" \
 -e "ETCD_OTHER_PEERS_CLIENT_URLS=http://192.168.99.100:1379,http://192.168.99.100:3379" \
--p 2379:2379 -p 2380:2380 balon/docker-rejoinable-etcd:v2.3.7
+-p 2379:2379 -p 2380:2380 oberthur/docker-rejoinable-etcd:2.3.7
 ````
 
 ````bash
@@ -79,7 +79,7 @@ docker run -it --name=etcd3 \
 -e "ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster-1" \
 -e "ETCD_INITIAL_CLUSTER=etcd1=http://192.168.99.100:1380,etcd2=http://192.168.99.100:2380,etcd3=http://192.168.99.100:3380" \
 -e "ETCD_OTHER_PEERS_CLIENT_URLS=http://192.168.99.100:1379,http://192.168.99.100:2379" \
--p 3379:2379 -p 3380:2380 balon/docker-rejoinable-etcd:v2.3.7
+-p 3379:2379 -p 3380:2380 oberthur/docker-rejoinable-etcd:2.3.7
 ````
 
 ## How to run it in Kubernetes?
