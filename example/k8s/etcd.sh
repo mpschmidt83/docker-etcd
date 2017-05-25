@@ -6,28 +6,29 @@ function create() {
 
   kubectl create namespace rejoinable-etcd
 
-  kubectl --namespace=rejoinable-etcd create -f etcd-lb-srv.yaml
-  kubectl --namespace=rejoinable-etcd create -f etcd1-srv.yaml
-  kubectl --namespace=rejoinable-etcd create -f etcd2-srv.yaml
-  kubectl --namespace=rejoinable-etcd create -f etcd3-srv.yaml
+  kubectl --namespace=rejoinable-etcd create -f services/etcd-lb.yaml
+  kubectl --namespace=rejoinable-etcd create -f services/etcd1.yaml
+  kubectl --namespace=rejoinable-etcd create -f services/etcd2.yaml
+  kubectl --namespace=rejoinable-etcd create -f services/etcd3.yaml
 
-  kubectl --namespace=rejoinable-etcd create -f etcd1-rc.yaml
-  kubectl --namespace=rejoinable-etcd create -f etcd2-rc.yaml
-  kubectl --namespace=rejoinable-etcd create -f etcd3-rc.yaml
+  kubectl --namespace=rejoinable-etcd create -f rcs/etcd1.yaml
+  kubectl --namespace=rejoinable-etcd create -f rcs/etcd2.yaml
+  kubectl --namespace=rejoinable-etcd create -f rcs/etcd3.yaml
+
 }
 
 
 
 function delete() {
 
-  kubectl --namespace=rejoinable-etcd delete rc etcd-node-001
-  kubectl --namespace=rejoinable-etcd delete rc etcd-node-002
-  kubectl --namespace=rejoinable-etcd delete rc etcd-node-003
+  kubectl --namespace=rejoinable-etcd delete deployments etcd-001
+  kubectl --namespace=rejoinable-etcd delete deployments etcd-002
+  kubectl --namespace=rejoinable-etcd delete deployments etcd-003
 
-  kubectl --namespace=rejoinable-etcd delete svc etcd-001-node-001
-  kubectl --namespace=rejoinable-etcd delete svc etcd-001-node-002
-  kubectl --namespace=rejoinable-etcd delete svc etcd-001-node-003
   kubectl --namespace=rejoinable-etcd delete svc etcd-001
+  kubectl --namespace=rejoinable-etcd delete svc etcd-002
+  kubectl --namespace=rejoinable-etcd delete svc etcd-003
+  kubectl --namespace=rejoinable-etcd delete svc etcd-lb
 
   kubectl delete namespace rejoinable-etcd
 

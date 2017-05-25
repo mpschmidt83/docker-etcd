@@ -1,31 +1,62 @@
-apiVersion: v1
-kind: ReplicationController
+apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
-  name: etcd-node-003
+  name: etcd-002
   namespace: rejoinable-etcd
   labels:
     app: etcd
-    node-id: etcd-003
+    node-id: etcd-002
 
 spec:
   replicas: 1
-  selector:
-    app: etcd
-    node-id: etcd-003
 
   template:
     metadata:
       labels:
         app: etcd
-        node-id: etcd-003
+        node-id: etcd-002
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "2379"
+        prometheus.io/path: "/metrics"
+
     spec:
       volumes:
       - name: etcd-data-dir
         emptyDir: {}
-      containers:
 
+      containers:
       - name: etcd
         image: oberthur/docker-rejoinable-etcd:2.3.7
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: ETCD_NAME
+          value: "etcd2"
+        - name: ETCD_ADVERTISE_CLIENT_URLS
+          value: "http://etcd-002.rejoinable-etcd:2379"
+        - name: ETCD_LISTEN_CLIENT_URLS
+          value: "http://0.0.0.0:2379"
+        - name: ETCD_INITIAL_ADVERTISE_PEER_URLS
+          value: "http://etcd-002.rejoinable-etcd:2380"
+        - name: ETCD_LISTEN_PEER_URLS
+          value: "http://0.0.0.0:2380"
+        - name: ETCD_INITIAL_CLUSTER_TOKEN
+          value: "etcd-cluster-1"
+        - name: ETCD_INITIAL_CLUSTER
+          value: "etcd1=http://etcd-001.rejoinable-etcd:2380,etcd2=http://etcd-002.rejoinable-etcd:2380,etcd3=http://etcd-003.rejoinable-etcd:2380"
+        - name: ETCD_OTHER_PEERS_CLIENT_URLS
+          value: "http://etcd-001.rejoinable-etcd:2379,http://etcd-003.rejoinable-etcd:2379"
+        - name: ETCD_DEBUG
+          value: "true"
+
+        volumeMounts:
+          - mountPath: /etcd2.etcd
+            name: etcd-data-dir
+
         resources:
           limits:
             cpu: 200m
@@ -33,33 +64,7 @@ spec:
           requests:
             cpu: 200m
             memory: 200Mi
-        imagePullPolicy: IfNotPresent
-        volumeMounts:
-        - mountPath: /etcd3.etcd
-          name: etcd-data-dir
-        env:
-        - name: POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-        - name: ETCD_NAME
-          value: "etcd3"
-        - name: ETCD_ADVERTISE_CLIENT_URLS
-          value: "http://etcd-001-node-003.rejoinable-etcd:2379"
-        - name: ETCD_LISTEN_CLIENT_URLS
-          value: "http://0.0.0.0:2379"
-        - name: ETCD_INITIAL_ADVERTISE_PEER_URLS
-          value: "http://etcd-001-node-003.rejoinable-etcd:2380"
-        - name: ETCD_LISTEN_PEER_URLS
-          value: "http://0.0.0.0:2380"
-        - name: ETCD_INITIAL_CLUSTER_TOKEN
-          value: "etcd-cluster-1"
-        - name: ETCD_INITIAL_CLUSTER
-          value: "etcd1=http://etcd-001-node-001.rejoinable-etcd:2380,etcd2=http://etcd-001-node-002.rejoinable-etcd:2380,etcd3=http://etcd-001-node-003.rejoinable-etcd:2380"
-        - name: ETCD_OTHER_PEERS_CLIENT_URLS
-          value: "http://etcd-001-node-001.rejoinable-etcd:2379,http://etcd-001-node-002.rejoinable-etcd:2379"
-        - name: ETCD_DEBUG
-          value: "true"
+
         ports:
         - name: etcd-db
           containerPort: 2379
@@ -67,3 +72,10 @@ spec:
         - name: etcd-cluster
           containerPort: 2380
           protocol: TCP
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 2379
+          initialDelaySeconds: 15
+          timeoutSeconds: 5

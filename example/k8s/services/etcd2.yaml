@@ -1,16 +1,18 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: etcd-001-node-002
+  name: etcd-002
   namespace: rejoinable-etcd
   labels:
-    type: cluster
     app: etcd
+
 spec:
+  type: LoadBalancer
   ports:
   - name: etcd-db
     port: 2379
     targetPort: 2379
+    nodePort: 32002
   - name: etcd-cluster
     port: 2380
     targetPort: 2380

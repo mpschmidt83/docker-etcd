@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: etcd-001
+  name: etcd-lb
   namespace: rejoinable-etcd
   labels:
-    type: cluster
     app: etcd
+
 spec:
   ports:
   - name: etcd-db
